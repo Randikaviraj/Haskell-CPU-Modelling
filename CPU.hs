@@ -20,7 +20,7 @@ data Instructions = MOVI RegName Int
                     deriving (Show, Eq) 
 
 data RegValue=  Undefined --Register values that can be take
-              | Modified Int
+              | Int
                   deriving Show
 
 data State a b c d e = State a b c d e -- state of five registers 
@@ -41,7 +41,31 @@ samplePro = [
  ADD  R4  R1 R2, 
  MUL  R5  R4 R3]
 
-initialState= State Undefined Undefined Undefined Undefined Undefined
+initialState= State Undefined Undefined Undefined Undefined Undefined --initial state undifined
+
+-- Register file updating functions
+registerFileUpdate::State->RegName->Int->State
+registerFileUpdate (State a b c d e) R1 value=State value b c d e
+registerFileUpdate (State a b c d e) R2 value=State a value c d e
+registerFileUpdate (State a b c d e) R3 value=State a b value d e
+registerFileUpdate (State a b c d e) R4 value=State a b c value e
+registerFileUpdate (State a b c d e) R5 value=State a b c d value
+
+
+-- Register file read functions
+registerFileRead::State->RegName->RegValue
+registerFileRead (State a _ _ _ _) R1=a
+registerFileRead (State _ b _ _ _) R2=b
+registerFileRead (State _ _ c _ _) R3=c
+registerFileRead (State _ _ _ d _) R4=d
+registerFileRead (State _ _ _ _ e) R5=e
+
+
+-- instruction decoding functions
+instructionDecode::Instructions->State->State
+
+execute::[Instructions]->State->State
+execute (instruction:remainInstructions) state=execute remainInstructions (instructionDecode instruction state)
 
 
 
