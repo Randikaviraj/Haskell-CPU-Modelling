@@ -23,15 +23,11 @@ data RegValue=  Undefined --Register values that can be take
                 |Modified Int
                   deriving Show
 
--- instance Show RegValue where
---   show Undefined="Undifined"
---   show x=show x
 
 data State a b c d e = State a b c d e -- state of five registers 
                      deriving Show
 
--- instance Show (State a b c d e) where
---     show(State a b c d e) = "State is "+show a+" "+show b+" "+show c+" "+show d
+
     
 
 {- Given below is a sample instruction sequence, 
@@ -90,11 +86,16 @@ execute::[Instructions]->(State RegValue RegValue RegValue RegValue RegValue)->(
 execute [] state=state
 execute (instruction:remainInstructions) state=execute remainInstructions (instructionDecode instruction state)
 
+-- printing state to console
+printRegValue :: RegValue -> [Char]
+printRegValue Undefined="Undifined"
+printRegValue (Modified a)=show a
 
+printState::State RegValue RegValue RegValue RegValue RegValue -> [Char]
+printState (State a b c d e) ="State "++" "++printRegValue  a++" "++printRegValue  b++" "++printRegValue  c++" "++printRegValue  d++" "++printRegValue  e
 
 main = do
-    state<=execute samplePro initialState
-    putStrLn $ show state
+    printState (execute samplePro initialState)
 
 
 
